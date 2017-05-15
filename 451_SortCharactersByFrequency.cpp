@@ -1,0 +1,69 @@
+//72.96%
+class Solution {
+public:
+    string frequencySort(string s) {
+		if(s.empty())
+			return s;
+        unordered_map<char, int> table;
+		for(char c : s){
+			auto ite(table.find(c));
+			if(ite == table.end())
+				table.insert(make_pair(c, 1));
+			else
+				++(ite -> second);
+		}
+		
+		vector<pair<char, int> > vec;
+		vec.reserve(table.size());
+		for(auto& record : table){
+			vec.emplace_back(record.first, record.second);
+		}
+		
+		sort(vec.begin(), vec.end(), [](const pair<char, int>& p1, const pair<char, int>& p2){ return p1.second > p2.second; });
+		string res;
+		for(auto& record : vec){
+			while(record.second--)
+				res += record.first;
+		}
+		return res;		
+    }
+};
+
+//A better solution which only use O(n)
+class Solution {
+public:
+    string frequencySort(string s) {
+        unordered_map<char,int> freq;
+        vector<string> bucket(s.size()+1, "");
+        string res;
+        
+        //count frequency of each character
+        for(char c:s) freq[c]++;
+        //put character into frequency bucket
+        for(auto& it:freq) {
+            int n = it.second;
+            char c = it.first;
+            bucket[n].append(n, c);
+        }
+        //form descending sorted string
+        for(int i=s.size(); i>0; i--) {
+            if(!bucket[i].empty())
+                res.append(bucket[i]);
+        }
+        return res;
+    }
+};
+
+
+class Solution {
+public:
+    string frequencySort(string s) {
+        int counts[256] = {0};
+        for (char ch : s)
+            ++counts[ch];
+        sort(s.begin(), s.end(), [&](char a, char b) { 
+            return counts[a] > counts[b] || (counts[a] == counts[b] && a < b); 
+        });
+        return s;
+    }
+};
